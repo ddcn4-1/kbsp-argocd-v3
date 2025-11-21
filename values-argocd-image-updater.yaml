@@ -1,0 +1,48 @@
+config:
+    argocd:
+        serverAddr: argocd-server.argocd.svc.cluster.local:443
+        insecure: true
+        grpcWeb: true
+
+    registries:
+        - name: ecr
+          api_url: https://911723818289.dkr.ecr.ap-northeast-2.amazonaws.com
+          prefix: 911723818289.dkr.ecr.ap-northeast-2.amazonaws.com
+          ping: yes
+          credentials: ext:/scripts/ecr-login.sh
+          credsexpire: 6h
+
+    git:
+        user: argocd-image-updater
+        email: argocd@local
+        ssh:
+            keyPath: /app/config/ssh/id_ed25519
+            knownHostsPath: /app/config/ssh/known_hosts
+
+authScripts:
+    enabled: true
+    scripts:
+        ecr-login.sh: |
+            #!/bin/sh
+            AWS_REGION="ap-northeast-2"
+            TOKEN=$(aws ecr get-authorization-token --region $AWS_REGION --query 'authorizationData[].authorizationToken' --output text)
+            USER_PASS=$(echo $TOKEN | base64 -d)
+            PASSWORD=$(echo $USER_PASS | cut -d: -f2)
+            echo "$PASSWORD"
+
+extraVolumeMounts:
+    - name: sshkey
+      mountPath: /app/config/ssh
+      readOnly: true
+
+extraVolumes:
+    - name: sshkey
+      secret:
+          secretName: argocd-image-updater-sshkey
+          items:
+              - key: sshPrivateKey
+                path: id_ed25519
+              - key: known_hosts
+                path: known_hosts
+
+logLevel: info

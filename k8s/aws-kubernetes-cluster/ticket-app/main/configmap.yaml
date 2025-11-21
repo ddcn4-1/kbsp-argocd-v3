@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  QUEUE_SERVICE_URL: http://ticketing-queue-service:8080
+  SERVER_PORT: "8080"
+  SPRING_PROFILES_ACTIVE: local
+  SQL_INIT_MODE: never
+kind: ConfigMap
+metadata:
+  name: ticket-main-config

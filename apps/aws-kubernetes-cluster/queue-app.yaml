@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: ticketing-queue
+    namespace: argocd
+    annotations:
+        argocd-image-updater.argoproj.io/image-list: |
+            queue=911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/admin
+        argocd-image-updater.argoproj.io/queue.update-strategy: latest
+        argocd-image-updater.argoproj.io/write-back-method: git
+spec:
+    project: default
+    source:
+        repoURL: 'https://github.com/ddcn4-1/kbsp-argocd-v3.git'
+        targetRevision: main
+        path: 'k8s/aws-kubernetes-cluster/ticket-app/queue'
+    destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: default
+    syncPolicy:
+        automated:
+            prune: true
+            selfHeal: true

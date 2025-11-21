@@ -1,0 +1,71 @@
+# nginx-api-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-ingress
+  namespace: default
+  annotations:
+    # NGINX Ingress Controller 사용
+    kubernetes.io/ingress.class: nginx
+    
+    # ============================================
+    # CORS 설정 (핵심!)
+    # ============================================
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://kbsp.ddcn41.com,https://accounts.kbsp.ddcn41.com,https://admin.kbsp.ddcn41.com"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-CSRF-Token"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-max-age: "3600"
+    
+    # ============================================
+    # 기타 설정
+    # ============================================
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # ALB에서 이미 처리
+
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: api.kbsp.ddcn41.com
+    http:
+      paths:
+      - path: /v1/queue
+        pathType: Prefix
+        backend:
+          service:
+            name: ticketing-queue-service
+            port:
+              number: 8080
+      
+      # ============================================
+      # Admin Service
+      # ============================================
+      - path: /v1/admin
+        pathType: Prefix
+        backend:
+          service:
+            name: ticketing-admin-service
+            port:
+              number: 8080
+      
+      # ============================================
+      # Default API Service
+      # ============================================
+      - path: /v1
+        pathType: Prefix
+        backend:
+          service:
+            name: ticketing-main-service
+            port:
+              number: 8080
+      
+      # ============================================
+      # Health Check (ALB용)
+      # ============================================
+      - path: /health
+        pathType: Exact
+        backend:
+          service:
+            name: ticketing-main--service
+            port:
+              number: 8080

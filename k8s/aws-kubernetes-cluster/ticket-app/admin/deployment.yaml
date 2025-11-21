@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ticketing-system-admin
+  name: ticketing-system-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ticketing-system-admin
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: ticketing-system-admin
+    spec:
+      containers:
+      - image: 911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/admin:latest
+        name: admin
+        envFrom:
+        - configMapRef:
+            name: ticket-admin-config
+        - secretRef:
+            name: db-secret
+        - secretRef:
+            name: redis-secret
+        - secretRef:
+            name: api-key-secret
+        resources:
+          limits:
+            memory: 512Mi
+      imagePullSecrets:
+      - name: regcred
+status: {}
