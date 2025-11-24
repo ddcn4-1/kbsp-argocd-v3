@@ -1,35 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: ticketing-system-queue
-  name: ticketing-system-queue
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ticketing-system-queue
-  strategy: {}
-  template:
-    metadata:
-      labels:
+    labels:
         app: ticketing-system-queue
-    spec:
-      containers:
-      - image: 911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/queue:latest
-        name: queue
-        envFrom:
-        - configMapRef:
-            name: ticket-queue-config
-        - secretRef:
-            name: db-secret
-        - secretRef:
-            name: redis-secret
-        - secretRef:
-            name: api-key-secret
-        resources:
-          limits: 
-            memory: 512Mi
-      imagePullSecrets:
-      - name: regcred
+    name: ticketing-system-queue
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: ticketing-system-queue
+    strategy: {}
+    template:
+        metadata:
+            labels:
+                app: ticketing-system-queue
+        spec:
+            containers:
+                - image: 911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/queue:latest
+                  name: queue
+                  envFrom:
+                      - configMapRef:
+                            name: ticket-queue-config
+                      - secretRef:
+                            name: db-secret
+                      - secretRef:
+                            name: redis-secret
+                      - secretRef:
+                            name: api-key-secret
+                  resources:
+                      limits:
+                          memory: 512Mi
 status: {}
