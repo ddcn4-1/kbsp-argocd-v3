@@ -11,10 +11,34 @@ server:
 repoServer:
     env:
         - name: SSH_AUTH_SOCK
-          value: /ssh-agent
+          value: /ssh-agent/ssh-agent.sock
+
+    extraContainers:
+        - name: ssh-agent
+          image: alpine:3.18
+          command: ['/bin/sh', '-c']
+          args:
+              - |
+                  apk add --no-cache openssh;
+                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
+                  # 키를 ssh-agent에 추가
+                  ssh-add /ssh-keys/id_ed25519;
+                  sleep infinity
+          volumeMounts:
+              - name: ssh-agent
+                mountPath: /ssh-agent
+              - name: ssh-keys
+                mountPath: /ssh-keys
+
     volumeMounts:
         - name: ssh-agent
           mountPath: /ssh-agent
+        - name: ssh-keys
+          mountPath: /ssh-keys
+
     volumes:
         - name: ssh-agent
           emptyDir: {}
+        - name: ssh-keys
+          secret:
+              secretName: argocd-image-updater-sshkey
