@@ -2,34 +2,30 @@ configs:
     params:
         server.insecure: true
 
-server:
-    service:
-        type: LoadBalancer
-
 repoServer:
     env:
         - name: SSH_AUTH_SOCK
           value: /ssh-agent/ssh-agent.sock
 
-    initContainers:
+    extraContainers:
         - name: ssh-agent
-          image: alpine:3.18
-          command:
-              - sh
-              - -c
-              - |
-                  apk add --no-cache openssh;
-                  mkdir -p /ssh-agent;
-                  ssh-agent -a /ssh-agent/ssh-agent.sock;
-                  chmod 777 /ssh-agent/ssh-agent.sock;
-                  ssh-add /ssh-keys/id_ed25519;
-                  sleep 3;
-
+          image: linuxserver/openssh-client:latest
+          env:
+              - name: SSH_AUTH_SOCK
+                value: /ssh-agent/ssh-agent.sock
           volumeMounts:
               - name: ssh-agent
                 mountPath: /ssh-agent
               - name: ssh-keys
-                mountPath: /ssh-keys
+                mountPath: /root/.ssh
+          command:
+              - sh
+              - -c
+              - |
+                  chmod 600 /root/.ssh/id_ed25519;
+                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
+                  ssh-add /root/.ssh/id_ed25519;
+                  tail -f /dev/null   # ssh-agent 살아있게 유지
 
     volumeMounts:
         - name: ssh-agent
@@ -41,3 +37,6 @@ repoServer:
         - name: ssh-keys
           secret:
               secretName: argocd-image-updater-sshkey
+              items:
+                  - key: sshPrivateKey
+                    path: id_ed25519
