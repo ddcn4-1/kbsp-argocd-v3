@@ -8,11 +8,11 @@ spec:
     source:
         repoURL: https://argoproj.github.io/argo-helm
         chart: argocd-image-updater
-        targetRevision: 1.0.1
+        targetRevision: 0.12.0
         helm:
             releaseName: argocd-image-updater
             valueFiles:
-                - values-argocd-image-updater.yaml # repo root에 있는 values 파일
+                - values-argocd-image-updater.yaml
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
