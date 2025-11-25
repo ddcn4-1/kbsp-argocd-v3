@@ -12,6 +12,7 @@ repoServer:
     securityContext:
         runAsUser: 0
         runAsGroup: 0
+        fsGroup: 0
 
     env:
         - name: SSH_AUTH_SOCK
