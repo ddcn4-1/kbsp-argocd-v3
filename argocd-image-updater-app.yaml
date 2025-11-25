@@ -6,11 +6,12 @@ metadata:
 spec:
     project: default
     source:
-        repoURL: https://github.com/ddcn4-1/kbsp-argocd-v3.git
-        targetRevision: main
-        path: argocd-image-updater
-        kustomize:
-            enableHelm: true
+        repoURL: https://argoproj.github.io/argo-helm
+        chart: argocd-image-updater
+        targetRevision: 0.12.0
+        helm:
+            valueFiles:
+                - https://raw.githubusercontent.com/ddcn4-1/kbsp-argocd-v3/main/values-argocd-image-updater.yaml
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
