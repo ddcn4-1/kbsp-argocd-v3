@@ -7,3 +7,14 @@ server:
         type: LoadBalancer
     ingress:
         enabled: false
+
+repoServer:
+    env:
+        - name: SSH_AUTH_SOCK
+          value: /ssh-agent
+    volumeMounts:
+        - name: ssh-agent
+          mountPath: /ssh-agent
+    volumes:
+        - name: ssh-agent
+          emptyDir: {}
