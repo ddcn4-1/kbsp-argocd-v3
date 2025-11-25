@@ -11,8 +11,7 @@ spec:
         targetRevision: 0.12.0
         helm:
             valueFiles:
-                - values-argocd-image-updater.yaml # repo 내부 값 사용
-        path: . # repo root를 기반으로 value 파일을 찾음
+                - https://raw.githubusercontent.com/ddcn4-1/kbsp-argocd-v3/main/values-argocd-image-updater.yaml
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
