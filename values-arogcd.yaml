@@ -13,6 +13,9 @@ repoServer:
         - name: SSH_AUTH_SOCK
           value: /ssh-agent/ssh-agent.sock
 
+    securityContext:
+        runAsUser: 0
+
     volumeMounts:
         - name: ssh-agent
           mountPath: /ssh-agent
@@ -21,7 +24,8 @@ repoServer:
 
     volumes:
         - name: ssh-agent
-          emptyDir: {}
+          emptyDir:
+              medium: Memory
         - name: ssh-keys
           secret:
               secretName: argocd-image-updater-sshkey
@@ -29,30 +33,33 @@ repoServer:
                   - key: sshPrivateKey
                     path: id_ed25519
 
-    # SSH Agent Sidecar
     extraContainers:
         - name: ssh-agent
           image: alpine:3.18
-          command:
-              - sh
-              - -c
+          command: ['/bin/sh', '-c']
+          args:
               - |
-                  set -ex
+                  apk add --no-cache openssh;
 
-                  apk add --no-cache openssh
-
-                  mkdir -p /root/.ssh
-                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519
-                  chmod 600 /root/.ssh/id_ed25519
+                  mkdir -p /root/.ssh;
+                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519;
+                  chmod 600 /root/.ssh/id_ed25519;
 
                   echo "Starting ssh-agent..."
-                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock)
+                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
 
-                  echo "Loading key..."
-                  ssh-add /root/.ssh/id_ed25519
+                  echo "Adding key..."
+                  ssh-add /root/.ssh/id_ed25519;
 
-                  # Allow repo-server container to access this socket
-                  chmod 777 /ssh-agent/ssh-agent.sock
+                  chmod 777 /ssh-agent/ssh-agent.sock;
 
                   echo "SSH agent ready."
-                  sleep infinity
+                  tail -f /dev/null;
+
+          securityContext:
+              runAsUser: 0
+          volumeMounts:
+              - name: ssh-agent
+                mountPath: /ssh-agent
+              - name: ssh-keys
+                mountPath: /ssh-keys
