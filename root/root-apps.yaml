@@ -7,7 +7,7 @@ spec:
     project: default
 
     source:
-        repoURL: 'git@github.com:ddcn4-1/kbsp-argocd-v3.git'
+        repoURL: 'https://github.com/ddcn4-1/kbsp-argocd-v3.git'
         targetRevision: main
         path: 'apps'
         directory:
