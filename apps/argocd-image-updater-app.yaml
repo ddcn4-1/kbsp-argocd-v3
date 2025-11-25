@@ -45,7 +45,7 @@ spec:
                       TOKEN=$(aws ecr get-authorization-token --region $AWS_REGION --query 'authorizationData[].authorizationToken' --output text)
                       USER_PASS=$(echo $TOKEN | base64 -d)
                       PASSWORD=$(echo $USER_PASS | cut -d: -f2)
-                      echo "$PASSWORD"
+                      echo "AWS:$PASSWORD"
 
                 logLevel: info
     destination:
