@@ -5,6 +5,8 @@ configs:
 server:
     service:
         type: LoadBalancer
+    ingress:
+        enabled: false
 
 repoServer:
     env:
@@ -27,7 +29,7 @@ repoServer:
                   - key: sshPrivateKey
                     path: id_ed25519
 
-    # Official sidecar method
+    # SSH Agent Sidecar
     extraContainers:
         - name: ssh-agent
           image: alpine:3.18
@@ -35,26 +37,22 @@ repoServer:
               - sh
               - -c
               - |
-                  apk add --no-cache openssh;
-                  mkdir -p /root/.ssh;
-                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519;
-                  chmod 600 /root/.ssh/id_ed25519;
+                  set -ex
 
-                  echo "Starting ssh-agent ..."
-                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
+                  apk add --no-cache openssh
 
-                  ssh-add /root/.ssh/id_ed25519;
-                  chmod 777 /ssh-agent/ssh-agent.sock;
+                  mkdir -p /root/.ssh
+                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519
+                  chmod 600 /root/.ssh/id_ed25519
 
-                  echo "SSH agent ready"
-                  sleep infinity;
+                  echo "Starting ssh-agent..."
+                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock)
 
-          volumeMounts:
-              - name: ssh-agent
-                mountPath: /ssh-agent
-              - name: ssh-keys
-                mountPath: /ssh-keys
+                  echo "Loading key..."
+                  ssh-add /root/.ssh/id_ed25519
 
-    securityContext:
-        fsGroup: 0
-        runAsUser: 0
+                  # Allow repo-server container to access this socket
+                  chmod 777 /ssh-agent/ssh-agent.sock
+
+                  echo "SSH agent ready."
+                  sleep infinity
