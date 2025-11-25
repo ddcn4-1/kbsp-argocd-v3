@@ -3,6 +3,10 @@ config:
         serverAddr: argocd-server.argocd.svc.cluster.local:443
         insecure: true
         grpcWeb: true
+    applicationsAPI:
+        namespaces:
+            - argocd
+            - default
 
     registries:
         - name: ecr

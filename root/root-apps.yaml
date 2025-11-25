@@ -9,7 +9,7 @@ spec:
     source:
         repoURL: 'https://github.com/ddcn4-1/kbsp-argocd-v3.git'
         targetRevision: main
-        path: 'k8s/aws-kubernetes-cluster/ticket-app'
+        path: 'apps/aws-kubernetes-cluster'
 
         directory:
             recurse: true
