@@ -12,6 +12,7 @@ spec:
         path: '.'
         directory:
             recurse: true
+            include: '*.yaml'
 
     destination:
         server: 'https://kubernetes.default.svc'

@@ -9,6 +9,8 @@ spec:
         repoURL: https://github.com/ddcn4-1/kbsp-argocd-v3.git
         targetRevision: main
         path: argocd-image-updater
+        kustomize:
+            enableHelm: true
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
