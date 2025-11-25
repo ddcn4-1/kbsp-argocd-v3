@@ -20,9 +20,6 @@ repoServer:
     extraContainers:
         - name: ssh-agent
           image: bitnami/git:latest
-          securityContext:
-              runAsUser: 0
-              fsGroup: 0
           command:
               - sh
               - -c
