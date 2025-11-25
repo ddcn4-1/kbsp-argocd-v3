@@ -5,8 +5,8 @@ metadata:
     namespace: argocd
     annotations:
         argocd-image-updater.argoproj.io/image-list: |
-            queue=911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/admin
-        argocd-image-updater.argoproj.io/queue.update-strategy: latest
+            queue=911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/queue
+        argocd-image-updater.argoproj.io/queue.update-strategy: newest-build
         argocd-image-updater.argoproj.io/write-back-method: git
 spec:
     project: default

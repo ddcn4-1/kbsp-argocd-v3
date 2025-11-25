@@ -6,7 +6,7 @@ metadata:
     annotations:
         argocd-image-updater.argoproj.io/image-list: |
             main=911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/main
-        argocd-image-updater.argoproj.io/main.update-strategy: latest
+        argocd-image-updater.argoproj.io/main.update-strategy: newest-build
         argocd-image-updater.argoproj.io/write-back-method: git
 spec:
     project: default
