@@ -33,31 +33,32 @@ repoServer:
                   - key: sshPrivateKey
                     path: id_ed25519
 
+    # SSH Agent Sidecar
     extraContainers:
         - name: ssh-agent
           image: alpine:3.18
-          command: ['/bin/sh', '-c']
-          args:
+          command:
+              - sh
+              - -c
               - |
-                  apk add --no-cache openssh;
+                  set -ex
+                  apk add --no-cache openssh
 
-                  mkdir -p /root/.ssh;
-                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519;
-                  chmod 600 /root/.ssh/id_ed25519;
+                  mkdir -p /root/.ssh
+                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519
+                  chmod 600 /root/.ssh/id_ed25519
 
                   echo "Starting ssh-agent..."
-                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
+                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock)
 
-                  echo "Adding key..."
-                  ssh-add /root/.ssh/id_ed25519;
+                  echo "Loading key..."
+                  ssh-add /root/.ssh/id_ed25519
 
-                  chmod 777 /ssh-agent/ssh-agent.sock;
+                  chmod 777 /ssh-agent/ssh-agent.sock
 
                   echo "SSH agent ready."
-                  tail -f /dev/null;
+                  tail -f /dev/null
 
-          securityContext:
-              runAsUser: 0
           volumeMounts:
               - name: ssh-agent
                 mountPath: /ssh-agent
