@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
     name: ticketing-main
-    namespace: default
+    namespace: argocd
     annotations:
         argocd-image-updater.argoproj.io/image-list: |
             main=911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/main
