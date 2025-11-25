@@ -12,7 +12,7 @@ spec:
         helm:
             releaseName: argocd-image-updater
             valueFiles:
-                - ../../../values-argocd-image-updater.yaml # Git repo root 기준 경로
+                - values-argocd-image-updater.yaml # Git repo root 기준 경로
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
