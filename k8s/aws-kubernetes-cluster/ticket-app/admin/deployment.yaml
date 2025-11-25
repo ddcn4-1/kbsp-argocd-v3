@@ -5,7 +5,7 @@ metadata:
         app: ticketing-system-admin
     name: ticketing-system-admin
 spec:
-    replicas: 1
+    replicas: 2
     selector:
         matchLabels:
             app: ticketing-system-admin
