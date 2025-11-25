@@ -9,7 +9,7 @@ spec:
     source:
         repoURL: 'https://github.com/ddcn4-1/kbsp-argocd-v3.git'
         targetRevision: main
-        path: '.'
+        path: 'apps'
         directory:
             recurse: true
             include: '*-app.yaml'
