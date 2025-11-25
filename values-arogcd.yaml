@@ -21,7 +21,7 @@ repoServer:
               - |
                   apk add --no-cache openssh;
                   eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
-                  # 키를 ssh-agent에 추가
+                  chmod 777 /ssh-agent/ssh-agent.sock;
                   ssh-add /ssh-keys/id_ed25519;
                   sleep infinity
           volumeMounts:
