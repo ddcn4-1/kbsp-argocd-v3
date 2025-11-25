@@ -24,6 +24,7 @@ config:
 
 authScripts:
     enabled: true
+    name: argocd-image-updater-authscripts
     scripts:
         ecr-login.sh: |
             #!/bin/sh
