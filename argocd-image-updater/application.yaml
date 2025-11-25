@@ -10,9 +10,44 @@ spec:
         chart: argocd-image-updater
         targetRevision: 0.12.0
         helm:
-            valueFiles:
-                - values.yaml # ← wrapper 내부 values.yaml 적용
-        path: argocd-image-updater # ← repo wrapper 디렉토리
+            values: |
+                config:
+                  argocd:
+                    serverAddr: argocd-server.argocd.svc.cluster.local:443
+                    insecure: true
+                    grpcWeb: true
+                  applicationsAPI:
+                    namespaces:
+                      - argocd
+                      - default
+
+                  registries:
+                    - name: ecr
+                      api_url: https://911723818289.dkr.ecr.ap-northeast-2.amazonaws.com
+                      prefix: 911723818289.dkr.ecr.ap-northeast-2.amazonaws.com
+                      ping: yes
+                      credentials: ext:/scripts/ecr-login.sh
+                      credsexpire: 6h
+
+                  git:
+                    user: argocd-image-updater
+                    email: argocd@local
+                    writeBackMethod: git
+                    sshSecret: argocd-image-updater-sshkey
+
+                authScripts:
+                  enabled: true
+                  name: argocd-image-updater-authscripts
+                  scripts:
+                    ecr-login.sh: |
+                      #!/bin/sh
+                      AWS_REGION="ap-northeast-2"
+                      TOKEN=$(aws ecr get-authorization-token --region $AWS_REGION --query 'authorizationData[].authorizationToken' --output text)
+                      USER_PASS=$(echo $TOKEN | base64 -d)
+                      PASSWORD=$(echo $USER_PASS | cut -d: -f2)
+                      echo "$PASSWORD"
+
+                logLevel: info
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
