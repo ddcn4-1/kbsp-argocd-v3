@@ -1,7 +1,3 @@
-configs:
-    params:
-        server.insecure: true
-
 repoServer:
     env:
         - name: SSH_AUTH_SOCK
@@ -9,27 +5,32 @@ repoServer:
 
     extraContainers:
         - name: ssh-agent
-          image: linuxserver/openssh-client:latest
-          env:
-              - name: SSH_AUTH_SOCK
-                value: /ssh-agent/ssh-agent.sock
-          volumeMounts:
-              - name: ssh-agent
-                mountPath: /ssh-agent
-              - name: ssh-keys
-                mountPath: /root/.ssh
+          image: bitnami/git:latest
           command:
               - sh
               - -c
               - |
+                  mkdir -p /root/.ssh;
+                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519;
                   chmod 600 /root/.ssh/id_ed25519;
+
                   eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
                   ssh-add /root/.ssh/id_ed25519;
-                  tail -f /dev/null   # ssh-agent 살아있게 유지
+
+                  echo "SSH Agent started. Keys loaded.";
+                  tail -f /dev/null   # keep running
+
+          volumeMounts:
+              - name: ssh-agent
+                mountPath: /ssh-agent
+              - name: ssh-keys
+                mountPath: /ssh-keys
 
     volumeMounts:
         - name: ssh-agent
           mountPath: /ssh-agent
+        - name: ssh-keys
+          mountPath: /ssh-keys
 
     volumes:
         - name: ssh-agent
