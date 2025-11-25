@@ -6,13 +6,15 @@ metadata:
 spec:
     project: default
     source:
-        repoURL: https://argoproj.github.io/argo-helm
-        chart: argocd-image-updater
-        targetRevision: 0.12.0
+        repoURL: https://github.com/ddcn4-1/kbsp-argocd-v3.git # Git repo
+        targetRevision: main
+        path: . # repo root 기준
         helm:
+            chart: argocd-image-updater
+            repoURL: https://argoproj.github.io/argo-helm
             releaseName: argocd-image-updater
             valueFiles:
-                - ./values-argocd-image-updater.yaml # repo root 기준 절대 경로
+                - values-argocd-image-updater.yaml # Git repo의 values
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
