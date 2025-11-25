@@ -14,8 +14,6 @@ spec:
         repoURL: 'https://github.com/ddcn4-1/kbsp-argocd-v3.git'
         targetRevision: main
         path: 'k8s/aws-kubernetes-cluster/ticket-app/admin'
-        directory:
-            recurse: true
     destination:
         server: 'https://kubernetes.default.svc'
         namespace: default
