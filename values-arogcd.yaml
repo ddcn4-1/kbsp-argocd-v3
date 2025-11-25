@@ -5,15 +5,8 @@ configs:
 server:
     service:
         type: LoadBalancer
-    ingress:
-        enabled: false
 
 repoServer:
-    securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
-
     env:
         - name: SSH_AUTH_SOCK
           value: /ssh-agent/ssh-agent.sock
@@ -34,33 +27,34 @@ repoServer:
                   - key: sshPrivateKey
                     path: id_ed25519
 
+    # Official sidecar method
     extraContainers:
         - name: ssh-agent
-          image: bitnami/git:latest
-          securityContext:
-              runAsUser: 0
-              runAsGroup: 0
-              fsGroup: 0
+          image: alpine:3.18
           command:
               - sh
               - -c
               - |
-                  echo "[SSH-AGENT] starting..."
+                  apk add --no-cache openssh;
                   mkdir -p /root/.ssh;
                   cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519;
                   chmod 600 /root/.ssh/id_ed25519;
 
+                  echo "Starting ssh-agent ..."
                   eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
-                  ssh-add /root/.ssh/id_ed25519;
 
-                  # allow repo-server access
+                  ssh-add /root/.ssh/id_ed25519;
                   chmod 777 /ssh-agent/ssh-agent.sock;
 
-                  echo "[SSH-AGENT] ready"
-                  tail -f /dev/null
+                  echo "SSH agent ready"
+                  sleep infinity;
 
           volumeMounts:
               - name: ssh-agent
                 mountPath: /ssh-agent
               - name: ssh-keys
                 mountPath: /ssh-keys
+
+    securityContext:
+        fsGroup: 0
+        runAsUser: 0
