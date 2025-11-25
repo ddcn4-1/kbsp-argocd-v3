@@ -11,7 +11,8 @@ spec:
         targetRevision: 0.12.0
         helm:
             valueFiles:
-                - https://raw.githubusercontent.com/ddcn4-1/kbsp-argocd-v3/main/values-argocd-image-updater.yaml
+                - values.yaml # ← wrapper 내부 values.yaml 적용
+        path: argocd-image-updater # ← repo wrapper 디렉토리
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
