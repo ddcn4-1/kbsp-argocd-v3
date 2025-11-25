@@ -5,25 +5,26 @@ configs:
 server:
     service:
         type: LoadBalancer
-    ingress:
-        enabled: false
 
 repoServer:
     env:
         - name: SSH_AUTH_SOCK
           value: /ssh-agent/ssh-agent.sock
 
-    extraContainers:
+    initContainers:
         - name: ssh-agent
           image: alpine:3.18
-          command: ['/bin/sh', '-c']
-          args:
+          command:
+              - sh
+              - -c
               - |
                   apk add --no-cache openssh;
-                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
+                  mkdir -p /ssh-agent;
+                  ssh-agent -a /ssh-agent/ssh-agent.sock;
                   chmod 777 /ssh-agent/ssh-agent.sock;
                   ssh-add /ssh-keys/id_ed25519;
-                  sleep infinity
+                  sleep 3;
+
           volumeMounts:
               - name: ssh-agent
                 mountPath: /ssh-agent
@@ -33,8 +34,6 @@ repoServer:
     volumeMounts:
         - name: ssh-agent
           mountPath: /ssh-agent
-        - name: ssh-keys
-          mountPath: /ssh-keys
 
     volumes:
         - name: ssh-agent
