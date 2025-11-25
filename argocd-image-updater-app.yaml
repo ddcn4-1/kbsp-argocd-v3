@@ -8,13 +8,7 @@ spec:
     source:
         repoURL: https://github.com/ddcn4-1/kbsp-argocd-v3.git
         targetRevision: main
-        path: .
-        helm:
-            chart: argocd-image-updater
-            repoURL: https://argoproj.github.io/argo-helm
-            releaseName: argocd-image-updater
-            valueFiles:
-                - values-argocd-image-updater.yaml
+        path: argocd-image-updater
     destination:
         server: https://kubernetes.default.svc
         namespace: argocd
