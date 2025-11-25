@@ -11,7 +11,7 @@ metadata:
 spec:
     project: default
     source:
-        repoURL: 'https://github.com/ddcn4-1/kbsp-argocd-v3.git'
+        repoURL: 'git@github.com:ddcn4-1/kbsp-argocd-v3.git'
         targetRevision: main
         path: 'k8s/aws-kubernetes-cluster/ticket-app/queue'
     destination:
