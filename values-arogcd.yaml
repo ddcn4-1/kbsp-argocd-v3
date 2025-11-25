@@ -1,30 +1,22 @@
+configs:
+    params:
+        server.insecure: true
+
+server:
+    service:
+        type: LoadBalancer
+    ingress:
+        enabled: false
+
 repoServer:
+    securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+
     env:
         - name: SSH_AUTH_SOCK
           value: /ssh-agent/ssh-agent.sock
-
-    extraContainers:
-        - name: ssh-agent
-          image: bitnami/git:latest
-          command:
-              - sh
-              - -c
-              - |
-                  mkdir -p /root/.ssh;
-                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519;
-                  chmod 600 /root/.ssh/id_ed25519;
-
-                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
-                  ssh-add /root/.ssh/id_ed25519;
-
-                  echo "SSH Agent started. Keys loaded.";
-                  tail -f /dev/null   # keep running
-
-          volumeMounts:
-              - name: ssh-agent
-                mountPath: /ssh-agent
-              - name: ssh-keys
-                mountPath: /ssh-keys
 
     volumeMounts:
         - name: ssh-agent
@@ -41,3 +33,34 @@ repoServer:
               items:
                   - key: sshPrivateKey
                     path: id_ed25519
+
+    extraContainers:
+        - name: ssh-agent
+          image: bitnami/git:latest
+          securityContext:
+              runAsUser: 0
+              runAsGroup: 0
+              fsGroup: 0
+          command:
+              - sh
+              - -c
+              - |
+                  echo "[SSH-AGENT] starting..."
+                  mkdir -p /root/.ssh;
+                  cp /ssh-keys/id_ed25519 /root/.ssh/id_ed25519;
+                  chmod 600 /root/.ssh/id_ed25519;
+
+                  eval $(ssh-agent -a /ssh-agent/ssh-agent.sock);
+                  ssh-add /root/.ssh/id_ed25519;
+
+                  # allow repo-server access
+                  chmod 777 /ssh-agent/ssh-agent.sock;
+
+                  echo "[SSH-AGENT] ready"
+                  tail -f /dev/null
+
+          volumeMounts:
+              - name: ssh-agent
+                mountPath: /ssh-agent
+              - name: ssh-keys
+                mountPath: /ssh-keys
