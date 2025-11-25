@@ -19,9 +19,8 @@ config:
     git:
         user: argocd-image-updater
         email: argocd@local
-        ssh:
-            keyPath: /app/config/ssh/id_ed25519
-            knownHostsPath: /app/config/ssh/known_hosts
+        writeBackMethod: git
+        sshSecret: argocd-image-updater-sshkey
 
 authScripts:
     enabled: true
@@ -33,20 +32,5 @@ authScripts:
             USER_PASS=$(echo $TOKEN | base64 -d)
             PASSWORD=$(echo $USER_PASS | cut -d: -f2)
             echo "$PASSWORD"
-
-extraVolumeMounts:
-    - name: sshkey
-      mountPath: /app/config/ssh
-      readOnly: true
-
-extraVolumes:
-    - name: sshkey
-      secret:
-          secretName: argocd-image-updater-sshkey
-          items:
-              - key: sshPrivateKey
-                path: id_ed25519
-              - key: known_hosts
-                path: known_hosts
 
 logLevel: info
