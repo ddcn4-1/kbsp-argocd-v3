@@ -1,3 +1,3 @@
 kustomize:
   images:
-  - 911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/admin:fbe5918
+  - 911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/admin:cf4610b
