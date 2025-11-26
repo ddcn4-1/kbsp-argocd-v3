@@ -18,6 +18,9 @@ spec:
             containers:
                 - image: 911723818289.dkr.ecr.ap-northeast-2.amazonaws.com/ddcn41/pjy/queue:latest
                   name: queue
+                  env:
+                      - name: SPRING_PROFILES_ACTIVE
+                        value: prod
                   envFrom:
                       - configMapRef:
                             name: ticket-queue-config
