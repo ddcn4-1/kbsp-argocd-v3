@@ -7,3 +7,16 @@ server:
         type: LoadBalancer
     ingress:
         enabled: false
+    metrics:
+        enabled: true
+
+controller:
+    metrics:
+        enabled: true
+
+applicationset:
+    enabled: true
+
+repoServer:
+    metrics:
+        enabled: true
