@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+    name: api-200ok-user-alert
+    namespace: monitoring
+spec:
+    groups:
+        - name: user-alert-rules
+          rules:
+              - alert: BookingAPIUp
+                expr: probe_success{job="blackbox-exporter"} == 1
+                for: 15s
+                labels:
+                    severity: info
+                    alert_channel: 'user-alert'
+                annotations:
+                    summary: 'Booking API returned 200 OK'
+                    description: 'https://api.ddcn41.com/v1/bookings is responding with 200 OK'

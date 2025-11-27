@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: blackbox-exporter
+    namespace: monitoring
+spec:
+    selector:
+        matchLabels:
+            app: blackbox-exporter
+    namespaceSelector:
+        matchNames:
+            - monitoring
+    endpoints:
+        - port: http
+          interval: 30s
+          path: /probe
+          params:
+              module: [http_2xx]
+              target: ['https://api.ddcn41.com/v1/bookings']

@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+    name: argocd-deploy-alert
+    namespace: monitoring
+spec:
+    groups:
+        - name: deploy-alert-rules
+          rules:
+              - alert: ArgoCDAppDeployed
+                expr: |
+                    argocd_app_sync_status == 1
+                    and
+                    argocd_app_health_status == 1
+                for: 10s
+                labels:
+                    severity: info
+                    alert_channel: 'deploy-alert'
+                annotations:
+                    summary: 'ArgoCD Application Deployment Succeeded'
+                    description: 'ArgoCD Application is Synced AND Healthy'

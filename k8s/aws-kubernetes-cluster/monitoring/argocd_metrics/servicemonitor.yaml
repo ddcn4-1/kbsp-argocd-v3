@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: argocd-metrics
+    namespace: monitoring
+    labels:
+        release: prometheus # kube-prometheus-stack의 selector
+spec:
+    namespaceSelector:
+        matchNames:
+            - argocd # ArgoCD 모든 metrics 서비스는 argocd 네임스페이스에 있음
+    selector:
+        matchExpressions:
+            - key: app.kubernetes.io/name
+              operator: In
+              values:
+                  - argocd-server
+                  - argocd-application-controller
+                  - argocd-repo-server
+                  - argocd-applicationset-controller
+    endpoints:
+        - port: metrics
+          interval: 30s

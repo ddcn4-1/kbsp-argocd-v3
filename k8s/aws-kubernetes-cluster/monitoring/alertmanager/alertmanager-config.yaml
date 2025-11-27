@@ -1,0 +1,40 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+    name: slack-router
+    namespace: monitoring
+spec:
+    route:
+        groupBy: ['alertname']
+        routes:
+            - matchers:
+                  - alert_channel="system-alert"
+              receiver: 'system-alert-receiver'
+            - matchers:
+                  - alert_channel="user-alert"
+              receiver: 'user-alert-receiver'
+            - matchers:
+                  - alert_channel="deploy-alert"
+              receiver: 'deploy-alert-receiver'
+
+    receivers:
+        - name: system-alert-receiver
+          slackConfigs:
+              - channel: '#system-alert'
+                apiURL:
+                    name: alertmanager-slack
+                    key: system_alert_url
+
+        - name: user-alert-receiver
+          slackConfigs:
+              - channel: '#user-alert'
+                apiURL:
+                    name: alertmanager-slack
+                    key: user_alert_url
+
+        - name: deploy-alert-receiver
+          slackConfigs:
+              - channel: '#deploy-alert'
+                apiURL:
+                    name: alertmanager-slack
+                    key: deploy_alert_url
