@@ -8,7 +8,7 @@ spec:
     source:
         repoURL: https://prometheus-community.github.io/helm-charts
         chart: kube-prometheus-stack
-        targetRevision: 58.3.0 # 안정 버전 (2025 기준)
+        targetRevision: 79.8.2 # 최신 버전 (2025 기준)
         helm:
             values: |
                 grafana:
